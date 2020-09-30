@@ -138,6 +138,18 @@ G4VPhysicalVolume* g4hrsDetectorConstruction::Construct() {
     fWorldVolume = new G4PVPlacement(0, G4ThreeVector(), worldLog, "world", 0, false, 0);
     
     CreateTarget(worldLog);
+
+    G4NistManager *nist = G4NistManager::Instance();
+    G4VSolid *acceptLimiter_sv = new G4Box("acceptLimiter_solid", 130*cm/2, 80*cm/2, 0.1*mm);
+    G4LogicalVolume *acceptLimiter_lv = new G4LogicalVolume(acceptLimiter_sv, 
+							    nist->FindOrBuildMaterial("G4_Galactic"),
+							    "acceptLimiter_lv");
+    new G4PVPlacement(0,G4ThreeVector(0,0,10*cm),
+		      acceptLimiter_lv,
+		      "acceptLimiter",
+		      worldLog,
+		      false,0,true);
+
     CreateSeptum(worldLog);
 //    CreateTargetChamber(worldLog);
     CreateHRS(worldLog);

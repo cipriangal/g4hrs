@@ -141,7 +141,8 @@ int main(int argc, char** argv){
     ((g4hrsEventAction *) event_action)->SetIO(io);
 
     runManager->SetUserAction(event_action);
-    G4UserSteppingAction* stepping_action = new g4hrsSteppingAction;
+    g4hrsSteppingAction* stepping_action = new g4hrsSteppingAction((g4hrsEventAction*)event_action);
+    //G4UserSteppingAction* stepping_action = new g4hrsSteppingAction((g4hrsEventAction*)event_action);
     runManager->SetUserAction(stepping_action);
     rmmess->SetStepAct((g4hrsSteppingAction *) stepping_action);
 	io->SetSteppingAction((g4hrsSteppingAction *) stepping_action);
@@ -243,6 +244,7 @@ int main(int argc, char** argv){
 
     // Initialize Run manager
     // runManager->Initialize();
+    stepping_action->Write();
     G4cout<<" Running time[s]: "<< (double) ((clock() - tStart)/CLOCKS_PER_SEC)<<G4endl;
     return 0;
 }

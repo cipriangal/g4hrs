@@ -15,8 +15,8 @@
 #include "G4AffineTransform.hh"
 #include "G4SystemOfUnits.hh"
 
-g4hrsSteppingAction::g4hrsSteppingAction()
-:drawFlag(false)
+g4hrsSteppingAction::g4hrsSteppingAction(g4hrsEventAction *evA)
+  :drawFlag(false),fEvAct(evA)
 {
 
 	numTF = 12;
@@ -80,8 +80,21 @@ g4hrsSteppingAction::g4hrsSteppingAction()
 	nelements = 5;
 	fMinEKill = 0.850*GeV;
 
+	fout=new TFile("o_limiter.root","RECREATE");
+	all=new TH2D("all","all hits at limiter",800,-50,50,800,-50,50);
+	accept=new TH2D("accept","accepted hits at limiter",800,-50,50,800,-50,50);
 }
 
+g4hrsSteppingAction::~g4hrsSteppingAction(){};
+
+void g4hrsSteppingAction::Write(){
+  G4cout<<"destructor"<<G4endl;
+  fout->cd();
+  all->Write();
+  accept->Write();
+  fout->Close();
+  delete fout;
+}
 void g4hrsSteppingAction::UserSteppingAction(const G4Step *aStep) {
     G4Track* fTrack = aStep->GetTrack();
     G4Material* material = fTrack->GetMaterial();
@@ -89,17 +102,60 @@ void g4hrsSteppingAction::UserSteppingAction(const G4Step *aStep) {
 	// Don't continue in these materials
 	// Don't track secondaries
 	// Don't track low energy (<0.9 GeV) particles
-
 	if(	((  material->GetName()=="Tungsten"
 		||  material->GetName()=="Copper" ) 
 		&&  fEnableKryptonite )
 		|| fTrack->GetParentID() != 0
 		|| fTrack->GetTotalEnergy() < fMinEKill ) {
-
 			fTrack->SetTrackStatus(fStopAndKill);
-
+			return;
 		} 
-		
+
+	auto *thePostPV = aStep->GetPostStepPoint()->GetPhysicalVolume();
+	if(thePostPV){
+	  if( thePostPV->GetName().contains("acceptLimiter") && fTrack->GetParentID() == 0){
+	    G4ThreeVector pos = fTrack->GetPosition();
+	    //G4ThreeVector pos = fTrack->GetMomentum();
+	    G4double theta = pos.getTheta();	    
+	    G4double phi = pos.getPhi();
+	    all->Fill(pos.getX(),pos.getY());
+	    if(phi<0) phi+=2*pi;
+	    if( theta < 8*pi/180 && theta > 2*pi/180 &&
+		abs(cos(phi))>0.9848 ){
+	      accept->Fill(pos.getX(),pos.getY());
+	      G4cout<<"\t th/phi "<<theta*180/pi<<" "<<phi*180/pi;
+	      G4cout<<" << saved"<<G4endl;
+	      fEvAct->SetFill(true);
+	    }else{
+	      fTrack->SetTrackStatus(fStopAndKill);
+	      //G4cout<<" << killed"<<G4endl;
+	      return;
+	    }
+	    //std::cin.ignore();
+	  }
+	}
+
+	// auto *thePostPV = aStep->GetPostStepPoint()->GetPhysicalVolume();
+	// if(thePostPV){
+	//   if( thePostPV->GetName().contains("acceptLimiter") && fTrack->GetParentID() == 0){
+	//     G4ThreeVector pos = fTrack->GetPosition();
+	//     G4double theta = pos.getTheta();	    
+	//     G4double phi = pos.getPhi();
+	//     if(phi<0) phi+=2*pi;
+	//     G4cout<<"\t th/phi "<<theta*180/pi<<" "<<phi*180/pi;
+	//     if( theta > 8*pi/180 || theta < 2*pi/180 ||
+	// 	abs(cos(phi))<0.9848 ){
+	//       G4cout<<" << killed"<<G4endl;
+	//       fTrack->SetTrackStatus(fStopAndKill);
+	//       fEvAct->SetFill(false);
+	//       return;
+	//     }
+	//     G4cout<<" << survived"<<G4endl;
+	//     std::cin.ignore();
+	//   }
+	// }
+	// if( fTrack->GetParentID() == 0 && killed )
+	//   fEvAct->SetFill(false);
 //	G4cout << "Step " << fTrack->GetCurrentStepNumber() << " in " << material->GetName() << G4endl;
 
 	////////////////////////////////////////////////

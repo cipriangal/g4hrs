@@ -17,6 +17,7 @@
 
 
 g4hrsEventAction::g4hrsEventAction() {
+  fFillTree=true;
 }
 
 g4hrsEventAction::~g4hrsEventAction(){
@@ -27,10 +28,10 @@ void g4hrsEventAction::BeginOfEventAction(const G4Event* ev){
 
 	fIO->ClearVirtualBoundaryData();
  
-	if(ev->GetEventID() % 100 == 0) {
+	if(ev->GetEventID() % 100000 == 0) {
 		G4cout << ev->GetEventID() << "\n";
 	}
- 
+	fFillTree=false;
   // Start timer at event 0
   if (ev->GetEventID() == 0) fTimer.Start();
   // Pretty ongoing status
@@ -87,12 +88,17 @@ void g4hrsEventAction::EndOfEventAction(const G4Event* evt ) {
 
   }
 
-	fIO->SetVirtualBoundaryData();
+  fIO->SetVirtualBoundaryData();
+
+  //  G4cout<<evt->GetEventID()<<G4endl;
 
   // Fill tree and reset buffers
-  fIO->FillTree();
-  fIO->Flush();
-
+  if(fFillTree){
+    //G4cout<<"saved"<<G4endl;
+    fIO->FillTree();
+    fIO->Flush();
+  }
+  //std::cin.ignore();
   return;
 }
 

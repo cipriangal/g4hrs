@@ -22,6 +22,7 @@ class g4hrsEventAction : public G4UserEventAction
 	
     void SetIO( g4hrsIO *io ){ fIO = io; }
 
+  void SetFill(G4bool val){fFillTree=val;}
   private:
   //  G4int gemCollID, hcalCollID, bbcalCollID;
 
@@ -31,7 +32,7 @@ class g4hrsEventAction : public G4UserEventAction
 
     // Timer for benchmarking of simulation time per event
     G4Timer fTimer;
-
+  G4bool fFillTree;
   public:
 };
 

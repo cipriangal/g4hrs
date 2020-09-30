@@ -3,16 +3,21 @@
 #define __REMOLLSTEPPINGACTION_HH
 
 #include "G4UserSteppingAction.hh"
+#include "g4hrsEventAction.hh"
 #include "globals.hh"
+#include "TFile.h"
+#include "TH2D.h"
 
 class g4hrsTransportFunction; 
+class g4hrsEventAction;
 class g4hrsTune;
 
 class g4hrsSteppingAction : public G4UserSteppingAction
 {
   public:
-    g4hrsSteppingAction();
-    virtual ~g4hrsSteppingAction(){};
+    g4hrsSteppingAction(g4hrsEventAction*);
+~g4hrsSteppingAction();
+void Write();
 
     virtual void UserSteppingAction(const G4Step*);
 
@@ -23,6 +28,8 @@ class g4hrsSteppingAction : public G4UserSteppingAction
 	G4double rad;
     G4bool fEnableKryptonite;
 	g4hrsTransportFunction* fTransportFunction;
+
+  g4hrsEventAction *fEvAct;
 
   public:
     inline void SetDrawFlag(G4bool val)
@@ -73,6 +80,9 @@ class g4hrsSteppingAction : public G4UserSteppingAction
         int numZCritVar;
         G4double ZCritData[23][5];
         G4String ZCritNames[23];
+
+TFile *fout;
+TH2D *all,*accept;
 
 };
 
