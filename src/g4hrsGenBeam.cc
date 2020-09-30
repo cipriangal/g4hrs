@@ -35,7 +35,10 @@ void g4hrsGenBeam::SamplePhysics(g4hrsVertex *vert, g4hrsEvent *evt){
     // Override target sampling z
     evt->fVertexPos.setZ( fZpos );
 
-    evt->ProduceNewParticle( G4ThreeVector(0.0, 0.0, 0.0), 
+    G4double rasx = CLHEP::RandFlat::shoot( -2.0*mm, 2.0*mm);
+    G4double rasy = CLHEP::RandFlat::shoot( -3.0*mm, 3.0*mm);
+
+    evt->ProduceNewParticle( G4ThreeVector(rasx, rasy, -10.0*mm), 
 	    evt->fBeamMomentum, 
 	    "e-" );
 
