@@ -1,0 +1,51 @@
+#*** run beam generator
+
+/g4hrs/kryptonite TRUE
+
+#*** This should be made obsolete
+#*** (but some classes still use it)
+/g4hrs/snake 49
+
+#*** This should typically be 4
+#*** (build all magnets in HRS)
+/g4hrs/hrssetup 4
+
+#*** Septum and HRS angles
+/g4hrs/sepangle 4.984 deg
+/g4hrs/hrsangle 12.5 deg
+
+#*** Septum and HRS momentum settings
+/g4hrs/sepmom 0.950 GeV
+/g4hrs/hrsmom 0.950 GeV
+
+#*** Or, specify an overall tune
+#*** (additional tunes can be defined in g4hrsTune.cc)
+/g4hrs/tune PREXII
+
+#*** This must be explicitly called
+/run/initialize
+
+#*** Target parameters must be set AFTER /run/initialize
+#*** (target physical volume must already exist)
+/g4hrs/targlen 0.5 mm
+/g4hrs/targpos 0.0 mm
+/g4hrs/targmat Pb208
+
+#*** Beam parameters
+/g4hrs/beamcurr 70e-6 A
+/g4hrs/beamene 0.95 GeV
+/g4hrs/minEkill 0.9 GeV
+/g4hrs/oldras FALSE
+/g4hrs/rasx 4.0 mm
+/g4hrs/rasy 4.0 mm
+
+#*** Generator parameters
+/g4hrs/gen beam
+/g4hrs/thmin 2.0 deg
+/g4hrs/thmax 8.0 deg
+/g4hrs/phmin -50.0 deg
+/g4hrs/phmax  50.0 deg
+
+/g4hrs/filename g4hrs_out.root
+
+/run/beamOn 1000000
