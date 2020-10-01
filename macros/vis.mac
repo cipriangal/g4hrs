@@ -20,7 +20,7 @@
 
 /run/initialize
 
-/g4hrs/targlen 0.5 mm
+/g4hrs/targlen 0.552 mm
 /g4hrs/targpos 0.0 mm
 /g4hrs/targmat Pb208
 
