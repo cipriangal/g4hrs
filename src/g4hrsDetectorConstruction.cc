@@ -150,17 +150,35 @@ void g4hrsDetectorConstruction::CreateTarget(G4LogicalVolume *pMotherLogVol){
     g4hrsBeamTarget *beamtarg = g4hrsBeamTarget::GetBeamTarget();
     beamtarg->Reset();
 
-	// Make lead the default target
-	// Can be changed in macro
-	G4Material* targ_material = mMaterialManager->lead208;
-
+    // Make lead the default target
+    // Can be changed in macro
+    G4Material* targ_material = mMaterialManager->lead208;
+    
     G4VSolid* targetSolid  = new G4Tubs("targetBox", 0.0, fTargetW, fTargetL / 2.0, 0, 360*deg );
     G4LogicalVolume* targetLogical = new G4LogicalVolume(targetSolid,targ_material,"targetLogical",0,0,0);
-
+    
     G4VPhysicalVolume *phystarg = new G4PVPlacement(0,G4ThreeVector(fTargetX, fTargetY, fTargetZ),
         targetLogical,"targetPhys",pMotherLogVol,0,0);
     
     beamtarg->SetTargetVolume(phystarg);
+
+    //upstream diamond foil
+    G4double usCfoil_length = 255.4*um;
+    G4VSolid* usCfoil_sol  = new G4Tubs("usCfoil_sol", 0.0, fTargetW, usCfoil_length / 2, 0, 360*deg );
+    G4LogicalVolume* usCfoil_log = new G4LogicalVolume(usCfoil_sol,mMaterialManager->diamond,"usCfoil_sol",0,0,0);
+
+    G4VPhysicalVolume *usCfoil_phys = new G4PVPlacement(0,G4ThreeVector(fTargetX, fTargetY, fTargetZ - (fTargetL+usCfoil_length)/2),
+							usCfoil_log,"usCfoil",pMotherLogVol,0,0);
+    beamtarg->AddUpstreamWall(usCfoil_phys);
+
+    //downstream diamond foil
+    G4double dsCfoil_length = 256.6*um;
+    G4VSolid* dsCfoil_sol  = new G4Tubs("dsCfoil_sol", 0.0, fTargetW, usCfoil_length / 2, 0, 360*deg );
+    G4LogicalVolume* dsCfoil_log = new G4LogicalVolume(dsCfoil_sol,mMaterialManager->diamond,"dsCfoil_sol",0,0,0);
+
+    G4VPhysicalVolume *dsCfoil_phys = new G4PVPlacement(0,G4ThreeVector(fTargetX, fTargetY, fTargetZ + (fTargetL+dsCfoil_length)/2),
+							dsCfoil_log,"dsCfoil",pMotherLogVol,0,0);
+    beamtarg->AddDownstreamWall(dsCfoil_phys);
 
     return;
 
