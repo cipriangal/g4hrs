@@ -16,8 +16,7 @@
 
 # Add axis (has to be after /vis/scene/create )
 #
-/vis/scene/add/axes 0 0 0 100 cm
-
+/vis/scene/add/axes 0 0 -0.276 0.552 mm
 
 #
 # Draw a picture that has just the detector (no trajectories or hits).
