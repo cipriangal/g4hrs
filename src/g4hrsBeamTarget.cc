@@ -48,7 +48,7 @@ g4hrsBeamTarget::g4hrsBeamTarget(){
 
     fAlreadyWarned = false;
 
-	fTargetMaterial = "Pb208";
+    fTargetMaterial = "Pb208";
 
 }
 
@@ -109,6 +109,7 @@ void g4hrsBeamTarget::UpdateInfo(){
 
     // First upstream
     for(it = fUpstreamVols.begin(); it != fUpstreamVols.end(); it++ ){
+
 	// Assume everything is non-nested tubes
 	if( !dynamic_cast<G4Tubs *>( (*it)->GetLogicalVolume()->GetSolid() )  &&
             !dynamic_cast<G4Box *>( (*it)->GetLogicalVolume()->GetSolid() ) 
@@ -310,6 +311,10 @@ g4hrsVertex g4hrsBeamTarget::SampleVertex(SampType_t samp){
 	    fSampLen = fTotalLength;
 	    break;
     }
+
+    G4cout<<__PRETTY_FUNCTION__<<" "<<__LINE__<<G4endl
+	  <<"\t tgt L*density "<<fTargLength<<" total L*density "<<fTotalLength/um<<G4endl
+	  <<"\tsampling length*density (should include diamond foils) "<<fSampLen/um<<G4endl;
 
     ztrav = CLHEP::RandFlat::shoot(0.0, fSampLen);
 
