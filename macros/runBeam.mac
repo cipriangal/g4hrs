@@ -48,4 +48,5 @@
 
 /g4hrs/filename g4hrs_out.root
 
-/run/beamOn 1000000
+##1e7 takes about 5.6e3 s (on a interactive node) -> no events in accept
+/run/beamOn 10000000
