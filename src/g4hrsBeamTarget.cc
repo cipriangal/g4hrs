@@ -312,9 +312,11 @@ g4hrsVertex g4hrsBeamTarget::SampleVertex(SampType_t samp){
 	    break;
     }
 
-    G4cout<<__PRETTY_FUNCTION__<<" "<<__LINE__<<G4endl
-	  <<"\t tgt L*density "<<fTargLength<<" total L*density "<<fTotalLength/um<<G4endl
-	  <<"\tsampling length*density (should include diamond foils) "<<fSampLen/um<<G4endl;
+    //debug block
+    // G4cout<<__PRETTY_FUNCTION__<<" "<<__LINE__<<G4endl
+    // 	  <<"\t tgt L*density "<<fTargLength<<" total L*density "<<fTotalLength/um<<G4endl
+    // 	  <<"\tsampling length*density (should include diamond foils) "<<fSampLen/um<<G4endl;
+    //std::cin.ignore();
 
     ztrav = CLHEP::RandFlat::shoot(0.0, fSampLen);
 
