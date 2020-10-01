@@ -55,7 +55,7 @@ g4hrsDetectorConstruction::g4hrsDetectorConstruction() {
 
     fTargetW = 2.0*2.54*cm;
     fTargetH = 2.0*2.54*cm;
-    fTargetL = 5*mm;
+    fTargetL = 0.552*mm;
 
     fTargetX = 0.0;
     fTargetY = 0.0;
@@ -167,16 +167,16 @@ void g4hrsDetectorConstruction::CreateTarget(G4LogicalVolume *pMotherLogVol){
     G4VSolid* usCfoil_sol  = new G4Tubs("usCfoil_sol", 0.0, fTargetW, usCfoil_length / 2, 0, 360*deg );
     G4LogicalVolume* usCfoil_log = new G4LogicalVolume(usCfoil_sol,mMaterialManager->diamond,"usCfoil_sol",0,0,0);
 
-    G4VPhysicalVolume *usCfoil_phys = new G4PVPlacement(0,G4ThreeVector(fTargetX, fTargetY, fTargetZ - (fTargetL+usCfoil_length)/2),
+    G4VPhysicalVolume *usCfoil_phys = new G4PVPlacement(0,G4ThreeVector(fTargetX, fTargetY, fTargetZ - (fTargetL+usCfoil_length/2)),
 							usCfoil_log,"usCfoil",pMotherLogVol,0,0);
     beamtarg->AddUpstreamWall(usCfoil_phys);
 
     //downstream diamond foil
     G4double dsCfoil_length = 256.6*um;
-    G4VSolid* dsCfoil_sol  = new G4Tubs("dsCfoil_sol", 0.0, fTargetW, usCfoil_length / 2, 0, 360*deg );
+    G4VSolid* dsCfoil_sol  = new G4Tubs("dsCfoil_sol", 0.0, fTargetW, dsCfoil_length / 2, 0, 360*deg );
     G4LogicalVolume* dsCfoil_log = new G4LogicalVolume(dsCfoil_sol,mMaterialManager->diamond,"dsCfoil_sol",0,0,0);
 
-    G4VPhysicalVolume *dsCfoil_phys = new G4PVPlacement(0,G4ThreeVector(fTargetX, fTargetY, fTargetZ + (fTargetL+dsCfoil_length)/2),
+    G4VPhysicalVolume *dsCfoil_phys = new G4PVPlacement(0,G4ThreeVector(fTargetX, fTargetY, fTargetZ + (fTargetL+dsCfoil_length/2)),
 							dsCfoil_log,"dsCfoil",pMotherLogVol,0,0);
     beamtarg->AddDownstreamWall(dsCfoil_phys);
 
