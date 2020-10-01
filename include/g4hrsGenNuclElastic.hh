@@ -28,6 +28,7 @@ class g4hrsGenNuclElastic : public g4hrsVEventGen {
 	g4hrsBeamTarget *fBeamTarg;
 
         g4hrsDatabase *fDatabase;
+        g4hrsDatabase *fDiamondDB;
 };
 
 #endif//__REMOLLGENPELASTIC_HH 
