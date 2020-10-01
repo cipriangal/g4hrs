@@ -13,14 +13,16 @@ g4hrsVEventGen::g4hrsVEventGen() {
     fBeamTarg = g4hrsBeamTarget::GetBeamTarget();
     fRunData  = g4hrsRun::GetRun()->GetData();
 
-	fIsVPosHCSSet = false;
-	fIsVPosTCSSet = false;
-	fIsVMomHCSSet = false;
-	fIsVMomTCSSet = false;
-  
-    fSampType       = kMainTarget;
+    fIsVPosHCSSet = false;
+    fIsVPosTCSSet = false;
+    fIsVMomHCSSet = false;
+    fIsVMomTCSSet = false;
+    
+    //fSampType       = kMainTarget;
+    fSampType       = kFullTarget;//FIXME
+    
     fApplyMultScatt = true;
-	fSeptumAngle = 5.*deg;
+    fSeptumAngle = 5.*deg;
 }
 
 g4hrsVEventGen::~g4hrsVEventGen() {
