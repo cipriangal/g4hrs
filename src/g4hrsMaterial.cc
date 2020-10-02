@@ -378,7 +378,10 @@ void g4hrsMaterial::ConstructMaterials()
 	a = 207.9766521*g/mole;
 	density = 11.38*g/cm3;
 	lead208 = new G4Material(name="Lead208", z=82., a, density);
-
+	// G4cout<<lead208->GetDensity()<<" "<<density<<" "<<g<<" "<<cm<<" "<<cm3<<G4endl;
+	// G4cout<<joule<<" "<<second<<" "<<meter<<G4endl;
+	// G4cout<<lead208->GetTotNbOfElectPerVolume()<<G4endl;
+	// std::cin.ignore();
 
 
 
