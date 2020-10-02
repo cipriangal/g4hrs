@@ -314,14 +314,42 @@ g4hrsVertex g4hrsBeamTarget::SampleVertex(SampType_t samp){
 
     //debug block
     // G4cout<<__PRETTY_FUNCTION__<<" "<<__LINE__<<G4endl
-    // 	  <<"\t tgt L*density "<<fTargLength<<" total L*density "<<fTotalLength/um<<G4endl
-    // 	  <<"\tsampling length*density (should include diamond foils) "<<fSampLen/um<<G4endl;
-    //std::cin.ignore();
+    // 	  <<"\t tgt L*density "<<fTargLength<<" total L*density "<<fTotalLength<<G4endl
+    // 	  <<"\tsampling length*density (should include diamond foils) "<<fSampLen<<G4endl;
 
-    ztrav = CLHEP::RandFlat::shoot(0.0, fSampLen);
-
+    //calculate total z length of the target
+    G4double zzSampLen(0);
+    for(it = fAllVols.begin(); it != fAllVols.end(); it++ )
+      zzSampLen += ((G4Tubs *) (*it)->GetLogicalVolume()->GetSolid())->GetZHalfLength()*2.0;
+    //sample flat in z
+    G4double zzSelectedZ = CLHEP::RandFlat::shoot(0.0, zzSampLen);
 
     G4Material *mat;
+    G4double rholen(0);
+    G4double zzLen(0);
+    bool foundIt(false);
+
+    //calculate the length*density up to the point where the sampling was done
+    for(it = fAllVols.begin(); it != fAllVols.end() && !foundIt; it++ ){
+      G4double volLen = = ((G4Tubs *) (*it)->GetLogicalVolume()->GetSolid())->GetZHalfLength()*2.0;
+      mat = (*it)->GetLogicalVolume()->GetMaterial();
+
+      if( zzSelectedZ - zzLen <= volLen ){
+	rholen = (zzSelectedZ-volLen) * ((G4Tubs *) (*it)->GetLogicalVolume()->GetSolid())->GetZHalfLength()*2.0*mat->GetDensity();
+	foundIt=true;
+      }else{
+	rholen += ((G4Tubs *) (*it)->GetLogicalVolume()->GetSolid())->GetZHalfLength()*2.0*mat->GetDensity();
+	zzLen  += volLen;
+      }
+    }
+
+    //assign that to the ztrav instead of sampling
+    ztrav = rhoLen;
+    //ztrav = CLHEP::RandFlat::shoot(0.0, fSampLen);
+
+    //std::cin.ignore();
+
+
     G4double zinvol;
 
     G4double cumz   = 0.0;
