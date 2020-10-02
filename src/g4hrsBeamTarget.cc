@@ -532,6 +532,82 @@ g4hrsVertex g4hrsBeamTarget::SampleVertex(SampType_t samp){
 
     assert( fBeamE >= electron_mass_c2 );
 
+    //RR -- from Hanjie. She calculates ionization losses here since this class has all the materials to be looped
+
+    fIonLoss = 0.0;
+    G4double ion_mostprob = 0.0;  // the ionization most probable energy loss dE/dx (MeV/(g/cm2)) 
+    bool pathend = false;
+
+    G4double kai = 0.15355; // 2*pi*Na*re^2*me*c^2*z;
+    G4double vgamma = thisvert.fBeamE/electron_mass_c2;
+    G4double vbeta = sqrt(1. - 1./pow(vgamma,2));
+    G4double vlen = 0;
+    G4double zcum = 0;
+    G4double zztrav = ztrav/(g/cm2);
+
+    for(it = fAllVols.begin(); it != fAllVols.end() && !pathend; it++ ){
+        mat = (*it)->GetLogicalVolume()->GetMaterial();
+        vlen = ((G4Tubs *) (*it)->GetLogicalVolume()->GetSolid())->GetZHalfLength()*2.0*mat->GetDensity();
+        G4double vvlen = vlen / (g/cm2);
+
+   // calculate the most probable energy loss for ionization dE/dx based on the "Particle Detectors C.Grupen B.Shwartz" eq(1.22)
+   // ionization parameters
+     G4IonisParamMat *ion_par = mat->GetIonisation();
+     G4double I = ion_par->GetMeanExcitationEnergy();
+     G4double X0 = ion_par->GetX0density();
+     G4double X1 = ion_par->GetX1density();
+     G4double C = ion_par->GetCdensity();
+     G4double Aden = ion_par->GetAdensity();
+     G4double Mden = ion_par->GetMdensity();
+  
+     G4double del_den = 0.0; // density effect PDG 2-18 Eq. (33.7) same as what is in G4hBetheBlochModel::BetheBlochFormula
+         G4double X = log(vgamma*vbeta)/log(10);
+        if ( X < X0 ) {
+             del_den = 0.0 ;
+        } else {
+             del_den = 2*log(10)*X - C ;
+             if ( X < X1 ) del_den += Aden*pow((X1-X),Mden) ;
+        }
+
+        G4double term1 = log(2.*electron_mass_c2*vgamma*vgamma*vbeta*vbeta/I);
+
+        if( (zztrav - zcum) < vlen){
+          G4double AA = mat->GetA() *mole/g;
+          G4double Kai = kai * mat->GetZ()/AA/(vbeta*vbeta)*(zztrav-zcum);
+
+          G4double term2 = log(Kai/I);
+          ion_mostprob += Kai*( term1 + term2 +0.2 - vbeta*vbeta - del_den );
+
+   // method 2: geant4 ionisation, should be mean energy not the most probably energy
+   // inclue the shell correction, which should be needed for low energy beam (so that the shell electron is not in rest anymore)
+   //
+   //          G4ParticleTable* aparticleTable = G4ParticleTable::GetParticleTable();
+   //          G4ParticleDefinition* aparticle = aparticleTable->FindParticle("e-");
+
+   //        G4hBetheBlochModel *betheBlochModel = new G4hBetheBlochModel("Bethe-Bloch") ;
+  //        G4double ionlossBB = betheBlochModel->TheValue(aparticle,mat, thisvert.fBeamE);
+
+  // method 3: ionization energy loss (mean energy lossi dE/dx get from bob)
+  //    double pb_x0 = 1.123 ; // MeV/(g/cm2) 
+  //    ion_eloss = pb_x0 * fRadLen *6.39358;  
+
+ //    double c12_x0 = 1.745 ; // MeV/(g/cm2)
+ //    ion_eloss = c12_x0 * fRadLen * 42.70;
+
+         pathend = true;
+      } else { 
+          G4double AA = mat->GetA() *mole/g;
+          G4double Kai = kai * mat->GetZ()/AA/(vbeta*vbeta)*vvlen;
+   
+          G4double term2 = log(Kai/I);
+          ion_mostprob += Kai*( term1 + term2 + 0.2 - vbeta*vbeta - del_den );
+          zcum += vvlen;
+      }
+
+      }
+      fIonLoss = ion_mostprob;
+   
+
     return thisvert;
 }
 

@@ -96,6 +96,10 @@ void g4hrsGenNuclElastic::SamplePhysics(g4hrsVertex *vert, g4hrsEvent *evt){
 
 	beamE -= eloss;
     }
+   
+    //RR -- from Hanjie
+    beamE -= fBeamTarg->fIonLoss;
+
 
     if( beamE < electron_mass_c2 ){ 
 	evt->SetEffCrossSection(0.0);

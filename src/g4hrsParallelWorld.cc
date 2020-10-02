@@ -141,6 +141,7 @@ void g4hrsParallelWorld::ConstructSD(G4LogicalVolume* motherLogical) {
 	G4VSolid* CollimatorSolid = new G4Tubs("ColTub",0,20.*cm,vb_thickness,0.0*deg,360.0*deg); //circles
 	G4VSolid* LocalAxis = new G4Cons("LocalAxis",20.*cm, 30.*cm, 0.0*cm, 0.1*cm, 40.*cm, 5.0*deg, 350*deg);
 
+
 	G4LogicalVolume* LPlaneLogical1 = new G4LogicalVolume(PlaneSolid1,0,"LPlaneLogical1",0,0,0);
 	G4LogicalVolume* RPlaneLogical1 = new G4LogicalVolume(PlaneSolid1,0,"RPlaneLogical1",0,0,0);
 	G4LogicalVolume* LPlaneLogical2 = new G4LogicalVolume(PlaneSolid2,0,"LPlaneLogical1",0,0,0);
@@ -149,10 +150,12 @@ void g4hrsParallelWorld::ConstructSD(G4LogicalVolume* motherLogical) {
 	G4LogicalVolume* CollimatorLogical = new G4LogicalVolume(CollimatorSolid,0,"CollimatorLogical",0,0,0);
 	G4LogicalVolume* LocalAxisLog = new G4LogicalVolume(LocalAxis, 0, "LocalAxisLog",0,0,0);
 
+      
         G4LogicalVolume* LFPLogical = new G4LogicalVolume(FPSolid,0,"LFPLogical",0,0,0);
         G4LogicalVolume* RFPLogical = new G4LogicalVolume(FPSolid,0,"RFPLogical",0,0,0);
 
 	G4VisAttributes* virtualBoundaryVisAtt = new G4VisAttributes(G4Colour(1.,0.,0.));	
+
 
 	LPlaneLogical1->SetVisAttributes(virtualBoundaryVisAtt);	
 	LPlaneLogical2->SetVisAttributes(virtualBoundaryVisAtt);
@@ -163,6 +166,7 @@ void g4hrsParallelWorld::ConstructSD(G4LogicalVolume* motherLogical) {
 	RFPLogical->SetVisAttributes(virtualBoundaryVisAtt);
 	CollimatorLogical->SetVisAttributes(virtualBoundaryVisAtt);
 	LocalAxisLog->SetVisAttributes(virtualBoundaryVisAtt);
+
 
 	///////////////////////////////
 	// Septum virtual boundaries //
@@ -210,6 +214,10 @@ void g4hrsParallelWorld::ConstructSD(G4LogicalVolume* motherLogical) {
          //RR downstream pivot
          double zdown[9] = { fPivotZOffset + 7*mm,  fPivotZOffset + 65*mm ,  fPivotZOffset + 236*mm,  fPivotZOffset + 353*mm,
          fPivotZOffset + 471*mm,  fPivotZOffset + 510*mm,  fPivotZOffset + 590*mm,  fPivotZOffset + 1012*mm,  fPivotZOffset + 1114*mm };
+
+         //RR -- adding the sieve boundary
+         double sieve = fPivotZOffset - 155.6*mm; 
+         new G4PVPlacement(0,G4ThreeVector(0,0,sieve),SepPlaneLogical,"virtualBoundaryPhys_zsieve",motherLogical,0,0);
 
 
 

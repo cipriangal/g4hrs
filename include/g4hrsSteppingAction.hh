@@ -71,8 +71,8 @@ class g4hrsSteppingAction : public G4UserSteppingAction
 	
 	int numZCrit;
         int numZCritVar;
-        G4double ZCritData[23][5];
-        G4String ZCritNames[23];
+        G4double ZCritData[24][6];
+        G4String ZCritNames[24];
 
 };
 

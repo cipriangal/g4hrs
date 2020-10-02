@@ -39,8 +39,8 @@ g4hrsSteppingAction::g4hrsSteppingAction()
 	VBnames[12] = "virtualBoundaryPhys_vdc";
 	VBnames[13] = "virtualBoundaryPhys_fp";	
 	
-	numZCrit = 23;
-	numZCritVar = 5;
+	numZCrit = 24;
+	numZCritVar = 6;
 	ZCritNames[0] =  "virtualBoundaryPhys_zpinch1";
 	ZCritNames[1] =  "virtualBoundaryPhys_zpinch2";
 	ZCritNames[2] =  "virtualBoundaryPhys_zpinch3";
@@ -64,7 +64,7 @@ g4hrsSteppingAction::g4hrsSteppingAction()
         ZCritNames[20] = "virtualBoundaryPhys_zdown7";
         ZCritNames[21] = "virtualBoundaryPhys_zdown8";
         ZCritNames[22] = "virtualBoundaryPhys_zdown9";
-
+        ZCritNames[23] = "virtualBoundaryPhys_zsieve";
 
 
 ///  new g4hrsSteppingActionMessenger(this);
@@ -169,6 +169,7 @@ void g4hrsSteppingAction::UserSteppingAction(const G4Step *aStep) {
 			//Transform
 			G4ThreeVector position0_tr = transport_targ.TransformPoint(position0);
 			G4ThreeVector momentum0_tr = transport_targ.TransformPoint(momentum0);
+
 
 			fX0_tr = position0_tr.x();
 			fY0_tr = position0_tr.y();
@@ -318,7 +319,8 @@ void g4hrsSteppingAction::UserSteppingAction(const G4Step *aStep) {
 					ZCritData[i][2] = z;
 					ZCritData[i][3] = momentum.theta()/rad;
 					ZCritData[i][4] = momentum.phi()/rad;
-				}
+                                        ZCritData[i][5] = momentum.mag();		
+		}
 			}
 
 		} //end if volName contains virtualBoundaryPhys

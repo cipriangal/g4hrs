@@ -95,6 +95,8 @@ class g4hrsBeamTarget {
 	G4double fTh0, fPh0;
 	G4double fdTh, fdPh, fCorrTh, fCorrPh;
 
+        //ionization loss
+        G4double fIonLoss;
 };
 
 

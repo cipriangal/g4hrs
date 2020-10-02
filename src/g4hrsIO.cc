@@ -73,8 +73,8 @@ g4hrsIO::g4hrsIO(){
 	sprintf(VarName[4],"ph");
 	sprintf(VarName[5],"p");
 
-	numZCrit = 23;
-	numZCritVar = 5;
+	numZCrit = 24;
+	numZCritVar = 6;
 	
 	sprintf(ZCritName[0], "zpinch1");
 	sprintf(ZCritName[1], "zpinch2");
@@ -99,7 +99,7 @@ g4hrsIO::g4hrsIO(){
         sprintf(ZCritName[20],"zdown7");
         sprintf(ZCritName[21],"zdown8");
         sprintf(ZCritName[22],"zdown9");
-
+        sprintf(ZCritName[23],"zsieve");
 
 
 	sprintf(ZCritVarName[0],"x");
@@ -107,7 +107,7 @@ g4hrsIO::g4hrsIO(){
 	sprintf(ZCritVarName[2],"z");
 	sprintf(ZCritVarName[3],"th");
 	sprintf(ZCritVarName[4],"ph");
-
+        sprintf(ZCritVarName[5],"p");
 
     fTree = NULL;
     InitializeTree();
