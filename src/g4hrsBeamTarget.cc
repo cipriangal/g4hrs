@@ -82,6 +82,7 @@ void g4hrsBeamTarget::UpdateInfo(){
 
     fTargLength   = 0.0;
     fTotalLength   = 0.0;
+    fAllVols.clear();
 
     double thiszlen = -1e9;
 
@@ -311,16 +312,19 @@ g4hrsVertex g4hrsBeamTarget::SampleVertex(SampType_t samp){
 	    fSampLen = fTotalLength;
 	    break;
     }
-
+    const bool debugPrint=false;
     //debug block
-    // G4cout<<__PRETTY_FUNCTION__<<" "<<__LINE__<<G4endl
-    // 	  <<"\t tgt L*density "<<fTargLength<<" total L*density "<<fTotalLength<<G4endl
-    // 	  <<"\tsampling length*density (should include diamond foils) "<<fSampLen<<G4endl;
+    if(debugPrint){
+       G4cout<<__PRETTY_FUNCTION__<<" "<<__LINE__<<G4endl
+    	  <<"\t tgt L*density "<<fTargLength<<" total L*density "<<fTotalLength<<G4endl
+    	  <<"\tsampling length*density (should include diamond foils) "<<fSampLen<<G4endl;
+    }
 
     std::vector<G4VPhysicalVolume *>::iterator it;
 
     //calculate total z length of the target
     G4double zzSampLen(0);
+    //G4cout<<"Volumes "<<fAllVols.size()<<G4endl;
     for(it = fAllVols.begin(); it != fAllVols.end(); it++ )
       zzSampLen += ((G4Tubs *) (*it)->GetLogicalVolume()->GetSolid())->GetZHalfLength()*2.0;
     //sample flat in z
@@ -335,24 +339,28 @@ g4hrsVertex g4hrsBeamTarget::SampleVertex(SampType_t samp){
     for(it = fAllVols.begin(); it != fAllVols.end() && !foundIt; it++ ){
       G4double volLen = ((G4Tubs *) (*it)->GetLogicalVolume()->GetSolid())->GetZHalfLength()*2.0;
       mat = (*it)->GetLogicalVolume()->GetMaterial();
-
+      if(debugPrint){
+	G4cout<<"\t"<<mat->GetName()<<" "<< (*it)->GetLogicalVolume()->GetSolid()->GetName()<<" "<<mat->GetDensity()<<G4endl;
+	G4cout<<"\t B "<<zzSelectedZ<<" "<<zzLen<<" "<<volLen<<" "<<rhoLen<<" "<<foundIt<<G4endl;
+      }
       if( zzSelectedZ - zzLen <= volLen ){
-	rhoLen = (zzSelectedZ-volLen) * ((G4Tubs *) (*it)->GetLogicalVolume()->GetSolid())->GetZHalfLength()*2.0*mat->GetDensity();
+	rhoLen += (zzSelectedZ-zzLen) * mat->GetDensity();
 	foundIt=true;
       }else{
 	rhoLen += ((G4Tubs *) (*it)->GetLogicalVolume()->GetSolid())->GetZHalfLength()*2.0*mat->GetDensity();
 	zzLen  += volLen;
       }
+      if(debugPrint)
+	G4cout<<"\t A "<<zzSelectedZ<<" "<<zzLen<<" "<<volLen<<" "<<rhoLen<<" "<<foundIt<<G4endl;
     }
 
     //assign that to the ztrav instead of sampling
     ztrav = rhoLen;
     //ztrav = CLHEP::RandFlat::shoot(0.0, fSampLen);
+    if(debugPrint)
+      G4cout<<"&& "<<zzSampLen<<" "<<zzSelectedZ<<" "<<rhoLen<<" "<<fSampLen<<G4endl;
 
-    //std::cin.ignore();
-
-
-    G4double zinvol;
+    G4double zinvol(0);
 
     G4double cumz   = 0.0;
     G4double radsum = 0.0;
@@ -413,6 +421,8 @@ g4hrsVertex g4hrsBeamTarget::SampleVertex(SampType_t samp){
                 }
                 break;
         }
+	if(debugPrint)
+	  G4cout<<"\t"<<mat->GetName()<<" "<<foundvol<<" "<<ztrav<<" "<<cumz<<" "<<zinvol<<" "<<len<<G4endl;
 
         if( mat->GetBaseMaterial() ){
             G4cerr << __FILE__ << " " << __PRETTY_FUNCTION__ << ":  The material you're using isn't" <<
@@ -433,6 +443,18 @@ g4hrsVertex g4hrsBeamTarget::SampleVertex(SampType_t samp){
             fVer    = G4ThreeVector( rasx, rasy, 
                     zinvol - (*it)->GetFrameTranslation().z()  
                     - ((G4Tubs *) (*it)->GetLogicalVolume()->GetSolid())->GetZHalfLength() );
+	    if(debugPrint){
+	      G4cout<<"\t"<<(*it)->GetLogicalVolume()->GetSolid()->GetName()<<G4endl;
+	      G4cout<<zinvol<<" "<<(*it)->GetFrameTranslation().z()
+		    <<" "<<((G4Tubs *) (*it)->GetLogicalVolume()->GetSolid())->GetZHalfLength()
+		    <<" "<<zinvol - (*it)->GetFrameTranslation().z() - ((G4Tubs *) (*it)->GetLogicalVolume()->GetSolid())->GetZHalfLength()
+		    <<G4endl;
+	      std::cin.ignore();
+	      // std::ofstream fout("z_pos.txt",std::ifstream::app);
+	      // //fout<<zzSelectedZ<<std::endl;
+	      // fout<<zinvol<<std::endl;
+	      // fout.close();	      
+	    }
 
             G4double masssum = 0.0;
             const G4int *atomvec = mat->GetAtomsVector();
@@ -451,7 +473,7 @@ g4hrsVertex g4hrsBeamTarget::SampleVertex(SampType_t samp){
                 msthick[nmsmat] = mat->GetDensity()*zinvol*fracvec[i];
                 msA[nmsmat] = (*elvec)[i]->GetA()*mole/g;
                 msZ[nmsmat] = (*elvec)[i]->GetZ();
-
+		//G4cout<<"~~ "<<nmsmat<<" "<<msthick[nmsmat]<<" "<<msA[nmsmat]<<" "<<msZ[nmsmat]<<G4endl;
                 nmsmat++;
             }
 
@@ -473,10 +495,12 @@ g4hrsVertex g4hrsBeamTarget::SampleVertex(SampType_t samp){
                 msthick[nmsmat] = len*fracvec[i];
                 msA[nmsmat] = (*elvec)[i]->GetA()*mole/g;
                 msZ[nmsmat] = (*elvec)[i]->GetZ();
+		//G4cout<<"@@ "<<nmsmat<<" "<<msthick[nmsmat]<<" "<<msA[nmsmat]<<" "<<msZ[nmsmat]<<G4endl;
                 nmsmat++;
             }
         }
     }
+
 
     if( !foundvol ){
         if( !fAlreadyWarned ){
@@ -493,6 +517,7 @@ g4hrsVertex g4hrsBeamTarget::SampleVertex(SampType_t samp){
     G4double bmth, bmph;
 
     if( nmsmat > 0 ){
+      //G4cout<<"?? "<<nmsmat<<" "<<msthick[0]<<" "<<msA[0]<<" "<<msZ[0]<<G4endl;
         fMS->Init( fBeamE, nmsmat, msthick, msA, msZ );
         msth = fMS->GenerateMSPlane();
         msph = fMS->GenerateMSPlane();
