@@ -64,7 +64,7 @@ void g4hrsMultScatt::Init( double p, int nmat, double t[], double A[], double Z[
        A    - Mass number
        Z    - Atomic number
     */
-
+  //G4cout<<"!! "<<nmat<<" "<<t[0]<<" "<<A[0]<<" "<<Z[0]<<G4endl;
     int i;
 
     if( nmat >= MAT_MAX ){
@@ -111,12 +111,13 @@ void g4hrsMultScatt::Init( double p, int nmat, double t[], double A[], double Z[
     
     double expb_num, expb_den;
     double bsum = 0.0;
-
+    //G4cout<<"fNmat: "<<fNmat<<G4endl;
     for( i = 0; i < fNmat; i++ ){
 	expb_num = (6680.0*cm2/g)*ft[i]*(fZ[i]+1.0)*pow(fZ[i],1.0/3.0);
 	expb_den = fA[i]*(1.0+3.34*pow(fZ[i]/137.0,2.0));
 
 	bsum += expb_num/expb_den;
+	//G4cout<<"\t"<<bsum<<" "<<expb_num<<" "<<expb_den<<G4endl;
     }
 
     // Check to see if we have a relevant amount of material
@@ -137,6 +138,8 @@ void g4hrsMultScatt::Init( double p, int nmat, double t[], double A[], double Z[
     }
 
     double b = log( bsum );
+    //G4cout<<b<<" "<<bsum<<G4endl<<G4endl<<G4endl;
+    // std::cin.ignore();
     assert( b > 1.0 );
 
     if( std::isnan(b) || std::isinf(b) || b <= 0.0 ){
