@@ -105,7 +105,7 @@ void g4hrsBeamTarget::UpdateInfo(){
         printf("[g4hrsBeamTarget::UpdateInfo] Target volume material %s\n", fTargVol->GetLogicalVolume()->GetMaterial()->GetName().c_str() );
 
         fTargLength  = thiszlen*fTargVol->GetLogicalVolume()->GetMaterial()->GetDensity();
-        fTotalLength += thiszlen*fTargVol->GetLogicalVolume()->GetMaterial()->GetDensity();
+        fTotalLength = thiszlen*fTargVol->GetLogicalVolume()->GetMaterial()->GetDensity();
     }
 
     // First upstream
