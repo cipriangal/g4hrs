@@ -317,6 +317,8 @@ g4hrsVertex g4hrsBeamTarget::SampleVertex(SampType_t samp){
     // 	  <<"\t tgt L*density "<<fTargLength<<" total L*density "<<fTotalLength<<G4endl
     // 	  <<"\tsampling length*density (should include diamond foils) "<<fSampLen<<G4endl;
 
+    std::vector<G4VPhysicalVolume *>::iterator it;
+
     //calculate total z length of the target
     G4double zzSampLen(0);
     for(it = fAllVols.begin(); it != fAllVols.end(); it++ )
@@ -325,20 +327,20 @@ g4hrsVertex g4hrsBeamTarget::SampleVertex(SampType_t samp){
     G4double zzSelectedZ = CLHEP::RandFlat::shoot(0.0, zzSampLen);
 
     G4Material *mat;
-    G4double rholen(0);
+    G4double rhoLen(0);
     G4double zzLen(0);
     bool foundIt(false);
 
     //calculate the length*density up to the point where the sampling was done
     for(it = fAllVols.begin(); it != fAllVols.end() && !foundIt; it++ ){
-      G4double volLen = = ((G4Tubs *) (*it)->GetLogicalVolume()->GetSolid())->GetZHalfLength()*2.0;
+      G4double volLen = ((G4Tubs *) (*it)->GetLogicalVolume()->GetSolid())->GetZHalfLength()*2.0;
       mat = (*it)->GetLogicalVolume()->GetMaterial();
 
       if( zzSelectedZ - zzLen <= volLen ){
-	rholen = (zzSelectedZ-volLen) * ((G4Tubs *) (*it)->GetLogicalVolume()->GetSolid())->GetZHalfLength()*2.0*mat->GetDensity();
+	rhoLen = (zzSelectedZ-volLen) * ((G4Tubs *) (*it)->GetLogicalVolume()->GetSolid())->GetZHalfLength()*2.0*mat->GetDensity();
 	foundIt=true;
       }else{
-	rholen += ((G4Tubs *) (*it)->GetLogicalVolume()->GetSolid())->GetZHalfLength()*2.0*mat->GetDensity();
+	rhoLen += ((G4Tubs *) (*it)->GetLogicalVolume()->GetSolid())->GetZHalfLength()*2.0*mat->GetDensity();
 	zzLen  += volLen;
       }
     }
@@ -361,8 +363,6 @@ g4hrsVertex g4hrsBeamTarget::SampleVertex(SampType_t samp){
     double   msZ[__MAX_MAT];
 
     // Figure out the material we are in and the radiation length we traversed
-    std::vector<G4VPhysicalVolume *>::iterator it;
-
     bool foundvol = false;
 
     for(it = fAllVols.begin(); it != fAllVols.end() && !foundvol; it++ ){
