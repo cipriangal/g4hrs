@@ -179,7 +179,7 @@ void g4hrsGenNuclElastic::SamplePhysics(g4hrsVertex *vert, g4hrsEvent *evt){
 	G4double APV1 = fDatabase->Interpolate(beamE,th,1,1);
 	if(int(thisA)==12){
 	  APV  = fDiamondDB->Interpolate(beamE,th,0,1); 
-	  APV1 = 0;
+	  APV1 = fDiamondDB->Interpolate(beamE,th,1,1); 
 	}
 
 	G4double sens;

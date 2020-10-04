@@ -37,6 +37,7 @@ g4hrsDatabase::g4hrsDatabase(G4String targmat) {
                 n_E = 3;
                 n_Th = 71;
                 LoadTable("c12_fsu.dat",0);
+                LoadTable("c12_fsu.dat",1);
         } 
 	else if(targmat == "Ca48") {
 		E_min = 0.5*GeV;
