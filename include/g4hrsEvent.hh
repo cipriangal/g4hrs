@@ -30,6 +30,7 @@ class g4hrsEvent {
 	void SetW2( G4double w2 ){ fW2 = w2; }
 	void SetXbj( G4double x ){ fXbj = x; }
 	void SetThCoM( G4double th ){ fThCoM = th; }
+  void SetNuclA(G4int val){ fNuclA=val;}
 
 	void Reset();
 	void UndoLastParticle();
@@ -56,6 +57,7 @@ class g4hrsEvent {
 	G4double fAsym, fmAsym;
 	G4double fSens;
 	G4double fWeight;
+	G4int fNuclA;
 
 	G4double fQ2;
 	G4double fW2;

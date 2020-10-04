@@ -77,6 +77,7 @@ class g4hrsIO {
 	Double_t fEvQ2;
 	Double_t fEvW2;
 	Double_t fEvThCoM;
+	Int_t fEvNuclA;
 
 	Double_t fBmX;
 	Double_t fBmY;

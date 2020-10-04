@@ -155,6 +155,8 @@ void g4hrsIO::InitializeTree(){
     fTree->Branch("ev.thcom", &fEvThCoM,  "ev.thcom/D");
     fTree->Branch("ev.beamp",  &fEvBeamP,   "ev.beamp/D");
 
+    fTree->Branch("ev.nuclA", &fEvNuclA, "ev.nuclA/I");
+
     fTree->Branch("ev.npart", &fNEvPart   ,     "ev.npart/I");
     fTree->Branch("ev.pid",   &fEvPID,      "ev.pid[ev.npart]/I");
     fTree->Branch("ev.vx",    &fEvPart_X,   "ev.vx[ev.npart]/D");
@@ -339,6 +341,8 @@ void g4hrsIO::SetEventData(g4hrsEvent *ev){
     fEvQ2     = ev->fQ2/__E_UNIT/__E_UNIT;
     fEvW2     = ev->fW2/__E_UNIT/__E_UNIT;
     fEvThCoM  = ev->fThCoM/deg; // specify this in degrees over anything else
+
+    fEvNuclA = ev->fNuclA;
 
     int idx;
     for( idx = 0; idx < n; idx++ ){
