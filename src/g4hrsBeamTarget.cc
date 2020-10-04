@@ -479,13 +479,12 @@ g4hrsVertex g4hrsBeamTarget::SampleVertex(SampType_t samp){
 
 		// target density in grams per cubic millimeter
 		G4double rho = mat->GetDensity()/(g/mm3);
-		// target length in millimeters
-		G4double t = ((G4Tubs *) (*it)->GetLogicalVolume()->GetSolid())->GetZHalfLength()*2.0/mm;
 		// target atomic mass number in grams per mole
 		G4double Amass = mat->GetA()/(g/mole);
 
-		// Effective material length in 1/mm^2
-            	fEffMatLen = rho*t*(Avogadro/Amass);
+		//This should allow us to scale each material up by 
+		//the electrons that scatter in the other materials so we can properly compare
+            	fEffMatLen = rho*zzSampLen*(Avogadro/Amass);
 
         } else {
             const G4ElementVector *elvec = mat->GetElementVector();
