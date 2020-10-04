@@ -140,6 +140,9 @@ void g4hrsGenNuclElastic::SamplePhysics(g4hrsVertex *vert, g4hrsEvent *evt){
 	//final energy	
 	double ef = (M_nucl*beamE)/(M_nucl + beamE*(1. - cos(th)));	
 
+	// G4cout<<"\t A= "<<thisA<<" "<<thisZ<<G4endl;
+	// G4cout<<"\t A= "<<int(thisA)<<" "<<int(thisZ)<<G4endl;
+
     double Q2  = 2.0*beamE*ef*(1.0-cos(th));
     evt->SetQ2( Q2 );
 
@@ -149,9 +152,10 @@ void g4hrsGenNuclElastic::SamplePhysics(g4hrsVertex *vert, g4hrsEvent *evt){
 
 	// Get cross section from database (units of millibarns)
 	// Multiply by millibarn, now it's in mm^2 (Geant's favorite length unit)
-	double sigma = fDatabase->Interpolate(beamE,th,0,0)*millibarn;  	
-	if(thisA==12)
+	double sigma = fDatabase->Interpolate(beamE,th,0,0)*millibarn;  
+	if(int(thisA)==12){
 	  sigma = fDiamondDB->Interpolate(beamE,th,0,0)*millibarn;  	
+	}
     // Suppress too low angles from being generated
     // If we're in the multiple-scattering regime
     // the cross sections are senseless.  We'll define this 
@@ -173,9 +177,9 @@ void g4hrsGenNuclElastic::SamplePhysics(g4hrsVertex *vert, g4hrsEvent *evt){
 	
 	G4double APV = fDatabase->Interpolate(beamE,th,0,1);
 	G4double APV1 = fDatabase->Interpolate(beamE,th,1,1);
-	if(thisA==12){
+	if(int(thisA)==12){
 	  APV  = fDiamondDB->Interpolate(beamE,th,0,1); 
-	  APV1 = fDiamondDB->Interpolate(beamE,th,1,1);
+	  APV1 = 0;
 	}
 
 	G4double sens;
